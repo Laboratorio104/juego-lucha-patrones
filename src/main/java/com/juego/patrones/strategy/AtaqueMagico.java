@@ -2,10 +2,6 @@ package com.juego.patrones.strategy;
 
 import java.util.Random;
 
-/**
- * Estrategia de ataque mágico.
- * Causa daño entre 10 y 25 puntos.
- */
 public class AtaqueMagico implements EstrategiaAtaque {
     private static final int MIN_DANO = 10;
     private static final int MAX_DANO = 25;

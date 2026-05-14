@@ -2,10 +2,6 @@ package com.juego.patrones.strategy;
 
 import java.util.Random;
 
-/**
- * Estrategia de ataque normal.
- * Causa daño entre 10 y 30 puntos.
- */
 public class AtaqueNormal implements EstrategiaAtaque {
     private static final int MIN_DANO = 10;
     private static final int MAX_DANO = 30;
