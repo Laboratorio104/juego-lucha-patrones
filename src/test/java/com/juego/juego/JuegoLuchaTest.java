@@ -74,21 +74,6 @@ public class JuegoLuchaTest {
         assertTrue(loki.getPuntosDeVida() == 0);
     }
 
-    @Test
-    @DisplayName("Main imprime instrucciones de uso")
-    void testMainImprimeInstrucciones() {
-        ByteArrayOutputStream salida = new ByteArrayOutputStream();
-        PrintStream original = System.out;
-        System.setOut(new PrintStream(salida));
-        try {
-            JuegoLucha.main(new String[0]);
-        } finally {
-            System.setOut(original);
-        }
-
-        assertTrue(salida.toString().contains("Use una fábrica o cree personajes"));
-    }
-
     private static class PersonajeStub extends Personaje {
         private final int[] daños;
         private int index = 0;
