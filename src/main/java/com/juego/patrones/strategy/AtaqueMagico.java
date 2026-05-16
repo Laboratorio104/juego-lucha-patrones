@@ -11,4 +11,9 @@ public class AtaqueMagico implements EstrategiaAtaque {
     public int atacar() {
         return rand.nextInt(MAX_DANO - MIN_DANO + 1) + MIN_DANO;
     }
+
+    @Override
+    public String getAttackName() {
+        return "Ataque Mágico";
+    }
 }

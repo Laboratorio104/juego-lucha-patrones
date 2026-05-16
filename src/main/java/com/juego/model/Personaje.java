@@ -20,7 +20,7 @@ public class Personaje {
 
         oponente.recibirDano(dano);
 
-        System.out.println(this.nombre + " ataca de la siguiente forma a " + oponente.getNombre() + " y hace " + dano + " de dano.");
+        System.out.println(this.nombre + " usa " + estrategiaAtaque.getAttackName() + " contra " + oponente.getNombre() + " y hace " + dano + " de daño.");
     }
 
     public void recibirDano(int dano) {

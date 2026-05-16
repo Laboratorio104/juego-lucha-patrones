@@ -1,0 +1,23 @@
+{
+  "name": "Java 17",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "jdkType": "msat"
+    },
+    "ghcr.io/devcontainers/features/maven:1": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "java.jdt.ls.java.home": "/usr/lib/jvm/msopenjdk-17-amd64"
+      },
+      "extensions": [
+        "vscjava.vscode-java-pack"
+      ]
+    }
+  }
+}

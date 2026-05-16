@@ -128,5 +128,10 @@ public class JuegoLuchaTest {
         public int atacar() {
             return daño;
         }
+
+        @Override
+        public String getAttackName() {
+            return "Ataque Fijo";
+        }
     }
 }

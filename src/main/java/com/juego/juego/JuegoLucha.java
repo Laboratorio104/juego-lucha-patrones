@@ -1,6 +1,9 @@
 package com.juego.juego;
 
 import com.juego.model.Personaje;
+import com.juego.patrones.factory.GuerreroFactory;
+import com.juego.patrones.factory.MagoFactory;
+import com.juego.patrones.factory.PersonajeFactory;
 
 public class JuegoLucha {
     private final Personaje personaje1;
@@ -44,6 +47,13 @@ public class JuegoLucha {
     }
 
     public static void main(String[] args) {
-        System.out.println("Use una fábrica o cree personajes y ejecute iniciarCombate().");
+        PersonajeFactory factoryGuerrero = new GuerreroFactory();
+        PersonajeFactory factoryMago = new MagoFactory();
+
+        Personaje guerrero = factoryGuerrero.createPersonaje("Thor");
+        Personaje mago = factoryMago.createPersonaje("Gandalf");
+
+        JuegoLucha juego = new JuegoLucha(guerrero, mago);
+        juego.iniciarCombate();
     }
 }
