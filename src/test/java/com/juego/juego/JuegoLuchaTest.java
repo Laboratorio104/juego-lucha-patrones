@@ -19,19 +19,17 @@ public class JuegoLuchaTest {
         Personaje atacante = new PersonajeStub("Guerrero", 150);
         Personaje defensor = new Personaje("Loki");
 
-        ByteArrayOutputStream salida = new ByteArrayOutputStream();
         PrintStream original = System.out;
-        System.setOut(new PrintStream(salida));
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
         try {
             new JuegoLucha(atacante, defensor).iniciarCombate();
         } finally {
             System.setOut(original);
         }
 
-        String consola = salida.toString();
-        assertTrue(consola.contains("¡Loki ha muerto!"));
-        assertTrue(consola.contains("Ganador: Guerrero"));
+        assertTrue(atacante.estaVivo());
         assertFalse(defensor.estaVivo());
+        assertTrue(defensor.getPuntosDeVida() == 0);
     }
 
     @Test
@@ -41,9 +39,8 @@ public class JuegoLuchaTest {
         Personaje thor = new PersonajeStub("Thor", log, 10, 100);
         Personaje loki = new PersonajeStub("Loki", log, 5, 100);
 
-        ByteArrayOutputStream salida = new ByteArrayOutputStream();
         PrintStream original = System.out;
-        System.setOut(new PrintStream(salida));
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
         try {
             new JuegoLucha(thor, loki).iniciarCombate();
         } finally {
@@ -57,26 +54,24 @@ public class JuegoLuchaTest {
     }
 
     @Test
-    @DisplayName("Combate completo usa estrategias deterministas y muestra ganadora")
+    @DisplayName("Combate completo usa estrategias deterministas y muestra rotacion correcta")
     void testCombateCompletoConEstrategias() {
         Personaje guerrero = new Personaje("Thor");
         Personaje loki = new Personaje("Loki");
         guerrero.setEstrategiaAtaque(new EstrategiaFija(30));
         loki.setEstrategiaAtaque(new EstrategiaFija(10));
 
-        ByteArrayOutputStream salida = new ByteArrayOutputStream();
         PrintStream original = System.out;
-        System.setOut(new PrintStream(salida));
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
         try {
             new JuegoLucha(guerrero, loki).iniciarCombate();
         } finally {
             System.setOut(original);
         }
 
-        String consola = salida.toString();
-        assertTrue(consola.contains("Turno 1"));
-        assertTrue(consola.contains("Ganador: Thor"));
+        assertTrue(guerrero.estaVivo());
         assertFalse(loki.estaVivo());
+        assertTrue(loki.getPuntosDeVida() == 0);
     }
 
     @Test

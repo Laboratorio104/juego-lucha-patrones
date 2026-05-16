@@ -2,10 +2,6 @@ package com.juego.juego;
 
 import com.juego.model.Personaje;
 
-/**
- * Simula un combate por turnos entre dos personajes.
- * Cada turno un personaje ataca al otro usando su estrategia de ataque actual.
- */
 public class JuegoLucha {
     private final Personaje personaje1;
     private final Personaje personaje2;
@@ -15,11 +11,8 @@ public class JuegoLucha {
         this.personaje2 = personaje2;
     }
 
-    /**
-     * Inicia la simulación de combate por turnos hasta que un personaje muera.
-     */
     public void iniciarCombate() {
-        System.out.println("--- INICIO DEL COMBATE ---");
+        System.out.println("INICIANDO PELEA");
         System.out.println(personaje1.getNombre() + " vs " + personaje2.getNombre());
         System.out.println(personaje1.getNombre() + " tiene " + personaje1.getPuntosDeVida() + " HP.");
         System.out.println(personaje2.getNombre() + " tiene " + personaje2.getPuntosDeVida() + " HP.");
@@ -30,14 +23,14 @@ public class JuegoLucha {
         int turno = 1;
 
         while (atacante.estaVivo() && defensor.estaVivo()) {
-            System.out.println("Turno " + turno + ": " + atacante.getNombre() + " ataca a " + defensor.getNombre());
+            System.out.println("Turno " + turno + ". Ataca " + atacante.getNombre());
             atacante.atacar(defensor);
-            System.out.println(defensor.getNombre() + " queda con " + defensor.getPuntosDeVida() + " HP.");
+            System.out.println(defensor.getNombre() + " queda con " + defensor.getPuntosDeVida() + " de vida.");
             System.out.println();
 
             if (!defensor.estaVivo()) {
-                System.out.println("¡" + defensor.getNombre() + " ha muerto!");
-                System.out.println("Ganador: " + atacante.getNombre());
+                System.out.println(defensor.getNombre() + " perdio toda su vida.");
+                System.out.println("Gana " + atacante.getNombre());
                 break;
             }
 
@@ -47,7 +40,7 @@ public class JuegoLucha {
             turno++;
         }
 
-        System.out.println("--- FIN DEL COMBATE ---");
+        System.out.println("Pelea terminada.");
     }
 
     public static void main(String[] args) {

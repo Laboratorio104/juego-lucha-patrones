@@ -45,6 +45,13 @@ public class PersonajeTest {
     }
 
     @Test
+    @DisplayName("Daño negativo no afecta los HP")
+    void testDanoNegativo() {
+        guerrero.recibirDano(-20);
+        assertEquals(100, guerrero.getPuntosDeVida());
+    }
+
+    @Test
     @DisplayName("Personaje muerto cuando los puntos de vida llegan a cero")
     void testPersonajeMuerto() {
         guerrero.recibirDano(100);

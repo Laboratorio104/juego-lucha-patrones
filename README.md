@@ -1,142 +1,52 @@
-# Juego Lucha Patrones
+[![Build Status](https://github.com/Laboratorio104/juego-lucha-patrones/actions/workflows/ci.yml/badge.svg)](https://github.com/Laboratorio104/juego-lucha-patrones/actions)
+[![JaCoCo Coverage](.github/badges/jacoco.svg)](https://jacoco.org)
 
-Proyecto Java Maven que implementa un juego de combate por turnos usando patrones de diseño.
+# Juego de Lucha por Turnos
 
-## Descripción
+## Arquitectura y Patrones de Diseño
 
-`Juego-lucha-patrones` es una aplicación de ejemplo para un juego de lucha en el que dos personajes se enfrentan por turnos hasta que uno de ellos muere. El proyecto demuestra el uso de patrones de diseño para separar responsabilidades y favorecer la extensibilidad.
+El sistema implementa una arquitectura desacoplada basada en patrones creacionales y estructurales para garantizar la extensibilidad y cumplir con los principios de diseño de software.
 
-## Patrones de diseño
+### 1. Patrón Strategy (Estructural)
 
-### Strategy
+* **Por qué se eligió:** Evita la acumulación de estructuras condicionales complejas (`if-else` o `switch`) dentro de la clase `Personaje` para determinar el daño según el tipo de ataque. Permite cumplir con el principio de Abierto/Cerrado (OCP), facilitando la adición de nuevos tipos de daño sin modificar las clases existentes.
+* **Flujo de ejecución:** 1. La interfaz `EstrategiaAtaque` define el contrato mediante el método `atacar()`.
+  2. Clases concretas (`AtaqueFuerte`, `AtaqueMagico`, `AtaqueDebil`, `AtaqueNormal`) implementan dicha interfaz encapsulando sus propios rangos de daño aleatorio.
+  3. La clase `Personaje` mantiene una referencia polimórfica a `EstrategiaAtaque`.
+  4. Al invocar `Personaje.atacar(oponente)`, el flujo delega el cálculo del daño directamente al método `atacar()` de la estrategia asignada y aplica el resultado sobre la salud del oponente.
 
-El patrón Strategy se utiliza para encapsular distintas formas de atacar en clases independientes.
+### 2. Patrón Factory Method (Creacional)
 
-- `com.juego.patrones.strategy.EstrategiaAtaque`
-- `com.juego.patrones.strategy.AtaqueFuerte`
-- `com.juego.patrones.strategy.AtaqueDebil`
-- `com.juego.patrones.strategy.AtaqueMagico`
-- `com.juego.patrones.strategy.AtaqueNormal`
+* **Por qué se eligió:** Desacopla al cliente de la instanciación directa de subclases de personajes (`Guerrero`, `Mago`, `Arquero`). Centraliza las reglas de inicialización, asegurando que cada rol nazca con la configuración correcta de atributos y dependencias sin exponer dicho proceso de ensamblaje de forma pública.
+* **Flujo de ejecución:**
+  1. La clase abstracta `PersonajeFactory` expone el método de fabricación `createPersonaje(String nombre)`.
+  2. Subclases de la fábrica (`GuerreroFactory`, `MagoFactory`, `ArqueroFactory`) implementan este método.
+  3. Cada fábrica concreta ejecuta internamente la instanciación de su respectivo personaje (por ejemplo, `new Mago(nombre)`).
+  4. Durante el constructor del personaje concreto, se invoca `setEstrategiaAtaque()` para asignarle de manera automática la estrategia por defecto correspondiente a su rol antes de ser retornado.
 
-La clase `com.juego.model.Personaje` mantiene una referencia a `EstrategiaAtaque` y usa `setEstrategiaAtaque(...)` para cambiar el comportamiento en tiempo de ejecución.
-
-### Factory Method
-
-El patrón Factory Method se usa para crear personajes con comportamiento inicial especializado.
-
-- `com.juego.patrones.factory.PersonajeFactory`
-- `com.juego.patrones.factory.GuerreroFactory`
-- `com.juego.patrones.factory.MagoFactory`
-- `com.juego.patrones.factory.ArqueroFactory`
-
-Las fábricas concretas crean personajes con estrategias de ataque predeterminadas.
-
-## Pruebas
-
-El proyecto incluye pruebas unitarias con JUnit 5 y Mockito.
-
-- `src/test/java/com/juego/model/PersonajeTest.java`
-- `src/test/java/com/juego/patrones/factory/PersonajeFactoryTest.java`
-- `src/test/java/com/juego/juego/JuegoLuchaTest.java`
-
-Estas pruebas cubren:
-
-- creación y estado de los personajes
-- reducción de vida y muerte
-- uso del patrón Strategy
-- creación de personajes por fábricas
-- simulación de combate por turnos
-
-## Cobertura de código
-
-JaCoCo se usa para generar informes de cobertura.
-
-- Configuración en `pom.xml`
-- Reporte generado en `target/site/jacoco/index.html`
-
-## Integración continua
-
-Se incluye un workflow de GitHub Actions en `.github/workflows/ci.yml` que ejecuta:
-
-1. compilación del proyecto con Maven
-2. ejecución de pruebas
-3. generación del reporte JaCoCo
-
-## Instrucciones de ejecución
+## Instrucciones de Ejecución
 
 ### Requisitos
+* Java 17
+* Maven
 
-- Java 17
-- Maven
+### Comandos del Ciclo de Vida
 
-### Compilar el proyecto
-
+1. **Compilar e instalar dependencias:**
 ```bash
 mvn clean compile
 ```
 
-### Ejecutar pruebas
-
+2. **Ejecutar pruebas unitarias (JUnit 5 + Mockito):**
 ```bash
 mvn test
 ```
 
-### Generar el reporte JaCoCo
-
+3. **Generar reporte de cobertura:**
 ```bash
 mvn jacoco:report
 ```
+*El reporte interactivo en formato HTML se genera en la ruta: `target/site/jacoco/index.html`.*
 
-### Ejecutar el proyecto
-
-La clase principal de simulación es `com.juego.juego.JuegoLucha`.
-
-Puedes ejecutar el proyecto con Maven si agregas una clase `main` que cree personajes y llame a `iniciarCombate()`, o usar un plugin de Maven apropiado para ejecutar la aplicación.
-
-## Estructura del proyecto
-
-```
-├── pom.xml
-├── README.md
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── src/
-│   ├── main/
-│   │   └── java/
-│   │       └── com/juego/
-│   │           ├── juego/
-│   │           │   └── JuegoLucha.java
-│   │           ├── model/
-│   │           │   ├── Personaje.java
-│   │           │   ├── Guerrero.java
-│   │           │   ├── Mago.java
-│   │           │   └── Arquero.java
-│   │           └── patrones/
-│   │               ├── factory/
-│   │               │   ├── PersonajeFactory.java
-│   │               │   ├── GuerreroFactory.java
-│   │               │   ├── MagoFactory.java
-│   │               │   └── ArqueroFactory.java
-│   │               └── strategy/
-│   │                   ├── EstrategiaAtaque.java
-│   │                   ├── AtaqueDebil.java
-│   │                   ├── AtaqueFuerte.java
-│   │                   ├── AtaqueMagico.java
-│   │                   └── AtaqueNormal.java
-│   └── test/
-│       └── java/
-│           └── com/juego/
-│               ├── model/
-│               │   ├── PersonajeTest.java
-│               ├── patrones/
-│               │   └── factory/
-│               │       └── PersonajeFactoryTest.java
-│               └── juego/
-│                   └── JuegoLuchaTest.java
-```
-
-## Notas
-
-- El proyecto está diseñado para ser fácil de extender con nuevas estrategias y tipos de personajes.
-- La separación de responsabilidades permite añadir más patrones sin modificar las clases principales.
+## Sustentación del Proyecto
+[Insertar enlace del video aquí]

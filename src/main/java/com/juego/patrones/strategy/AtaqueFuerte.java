@@ -2,7 +2,6 @@ package com.juego.patrones.strategy;
 
 import java.util.Random;
 
-
 public class AtaqueFuerte implements EstrategiaAtaque {
     private static final int MIN_DANO = 20;
     private static final int MAX_DANO = 40;
