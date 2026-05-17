@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/Laboratorio104/juego-lucha-patrones/actions/workflows/ci.yml/badge.svg)](https://github.com/Laboratorio104/juego-lucha-patrones/actions)
-[![JaCoCo Coverage](.github/badges/jacoco.svg)](https://jacoco.org)
+[![JaCoCo Coverage](.github/badges/jacoco.svg?v=2)](https://jacoco.org)
 
 # Juego de Lucha por Turnos
 
