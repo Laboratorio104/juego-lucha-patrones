@@ -1,6 +1,12 @@
 package com.juego.patrones.factory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -8,54 +14,51 @@ import com.juego.model.Personaje;
 
 public class PersonajeFactoryTest {
 
+    private final PrintStream originalOut = System.out;
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+
+    @BeforeEach
+    void setUp() {
+        System.setOut(new PrintStream(outContent));
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.setOut(originalOut);
+    }
+
     @Test
-    @DisplayName("GuerreroFactory crea un Guerrero con ataque fuerte")
+    @DisplayName("GuerreroFactory crea un Guerrero con ataque fuerte (20-40)")
     void testGuerreroFactory() {
-        PersonajeFactory factory = new GuerreroFactory();
-        Personaje personaje = factory.createPersonaje("Bjorn");
-
+        Personaje personaje = new GuerreroFactory().createPersonaje("Bjorn");
         assertTrue(personaje instanceof com.juego.model.Guerrero);
-
-        Personaje oponente = new Personaje("Loki");
-        int vidaInicial = oponente.getPuntosDeVida();
-        personaje.atacar(oponente);
-        int dano = vidaInicial - oponente.getPuntosDeVida();
-
-        assertTrue(dano >= 20 && dano <= 40,
-                "Un Guerrero debe causar entre 20 y 40 de daño, fue: " + dano);
+        verificarRangoDeDano(personaje, 20, 40);
     }
 
     @Test
-    @DisplayName("MagoFactory crea un Mago con ataque mágico")
+    @DisplayName("MagoFactory crea un Mago con ataque mágico (10-25)")
     void testMagoFactory() {
-        PersonajeFactory factory = new MagoFactory();
-        Personaje personaje = factory.createPersonaje("Merlín");
-
+        Personaje personaje = new MagoFactory().createPersonaje("Merlín");
         assertTrue(personaje instanceof com.juego.model.Mago);
-
-        Personaje oponente = new Personaje("Loki");
-        int vidaInicial = oponente.getPuntosDeVida();
-        personaje.atacar(oponente);
-        int dano = vidaInicial - oponente.getPuntosDeVida();
-
-        assertTrue(dano >= 10 && dano <= 25,
-                "Un Mago debe causar entre 10 y 25 de daño, fue: " + dano);
+        verificarRangoDeDano(personaje, 10, 25);
     }
 
     @Test
-    @DisplayName("ArqueroFactory crea un Arquero con ataque débil")
+    @DisplayName("ArqueroFactory crea un Arquero con ataque débil (5-15)")
     void testArqueroFactory() {
-        PersonajeFactory factory = new ArqueroFactory();
-        Personaje personaje = factory.createPersonaje("Legolas");
-
+        Personaje personaje = new ArqueroFactory().createPersonaje("Legolas");
         assertTrue(personaje instanceof com.juego.model.Arquero);
+        verificarRangoDeDano(personaje, 5, 15);
+    }
 
-        Personaje oponente = new Personaje("Loki");
+    private void verificarRangoDeDano(Personaje atacante, int minDano, int maxDano) {
+        Personaje oponente = new Personaje("Muñeco de Pruebas");
         int vidaInicial = oponente.getPuntosDeVida();
-        personaje.atacar(oponente);
-        int dano = vidaInicial - oponente.getPuntosDeVida();
+        
+        atacante.atacar(oponente);
+        int danoCausado = vidaInicial - oponente.getPuntosDeVida();
 
-        assertTrue(dano >= 5 && dano <= 15,
-                "Un Arquero debe causar entre 5 y 15 de daño, fue: " + dano);
+        assertTrue(danoCausado >= minDano && danoCausado <= maxDano,
+                "El daño " + danoCausado + " está fuera del rango esperado (" + minDano + " - " + maxDano + ")");
     }
 }

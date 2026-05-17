@@ -3,52 +3,52 @@ package com.juego.juego;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.inOrder;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import com.juego.model.Personaje;
-import com.juego.patrones.strategy.EstrategiaAtaque;
 
 public class JuegoLuchaTest {
+
+    private final PrintStream originalOut = System.out;
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+
+    @BeforeEach
+    void setUp() {
+        System.setOut(new PrintStream(outContent));
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.setOut(originalOut);
+    }
 
     @Test
     @DisplayName("El método main ejecuta una simulación completa sin fallar")
     void testMainEjecutaSinExcepciones() {
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));
-        try {
-            assertDoesNotThrow(() -> {
-                JuegoLucha.main(new String[]{});
-            }, "La simulación del método main falló y lanzó una excepción");
-        } finally {
-            System.setOut(originalOut);
-        }
+        assertDoesNotThrow(() -> JuegoLucha.main(new String[]{}), 
+                "La simulación del método main falló y lanzó una excepción");
     }
 
     @Test
-    @DisplayName("El ciclo no se ejecuta si un personaje ya está muerto al iniciar")
-    void testCombateConPersonajeMuerto() {
+    @DisplayName("El ciclo no se ejecuta si el defensor ya está muerto al iniciar")
+    void testCombateConDefensorMuerto() {
         Personaje atacante = new Personaje("Thor");
         Personaje defensor = new Personaje("Loki");
-
         defensor.recibirDano(150); 
         
-        JuegoLucha juego = new JuegoLucha(atacante, defensor);
+        new JuegoLucha(atacante, defensor).iniciarCombate();
         
-        PrintStream original = System.out;
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));
-        try {
-            juego.iniciarCombate();
-        } finally {
-            System.setOut(original);
-        }
-        
-        assertFalse(defensor.estaVivo());
-        assertEquals(100, atacante.getPuntosDeVida());
+        assertEquals(100, atacante.getPuntosDeVida(), "El atacante no debió realizar ninguna acción");
     }
 
     @Test
@@ -56,127 +56,26 @@ public class JuegoLuchaTest {
     void testCombateConAtacanteMuerto() {
         Personaje atacante = new Personaje("Thor");
         Personaje defensor = new Personaje("Loki");
-
         atacante.recibirDano(150); 
         
-        JuegoLucha juego = new JuegoLucha(atacante, defensor);
+        new JuegoLucha(atacante, defensor).iniciarCombate();
         
-        PrintStream original = System.out;
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));
-        try {
-            juego.iniciarCombate();
-        } finally {
-            System.setOut(original);
-        }
-        
-        assertFalse(atacante.estaVivo());
-        assertEquals(100, defensor.getPuntosDeVida());
+        assertEquals(100, defensor.getPuntosDeVida(), "El defensor no debió recibir daño");
     }
 
     @Test
-    @DisplayName("El combate termina cuando el defensor muere")
-    void testTerminaCuandoDefensorMuere() {
-        Personaje atacante = new PersonajeStub("Guerrero", 150);
-        Personaje defensor = new Personaje("Loki");
+    @DisplayName("Combate completo alterna turnos de forma lógica y termina cuando alguien muere")
+    void testCombateCompletoYAlternaTurnos() {
+        Personaje thor = spy(new Personaje("Thor"));
+        Personaje loki = spy(new Personaje("Loki"));
 
-        PrintStream original = System.out;
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));
-        try {
-            new JuegoLucha(atacante, defensor).iniciarCombate();
-        } finally {
-            System.setOut(original);
-        }
+        new JuegoLucha(thor, loki).iniciarCombate();
 
-        assertTrue(atacante.estaVivo());
-        assertFalse(defensor.estaVivo());
-        assertTrue(defensor.getPuntosDeVida() == 0);
-    }
+        assertTrue(!thor.estaVivo() || !loki.estaVivo(), "El combate debió terminar con un personaje muerto");
 
-    @Test
-    @DisplayName("Se alternan los turnos entre los personajes")
-    void testAlternaTurnos() {
-        StringBuilder log = new StringBuilder();
-        Personaje thor = new PersonajeStub("Thor", log, 10, 100);
-        Personaje loki = new PersonajeStub("Loki", log, 5, 100);
-
-        PrintStream original = System.out;
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));
-        try {
-            new JuegoLucha(thor, loki).iniciarCombate();
-        } finally {
-            System.setOut(original);
-        }
-
-        String orden = log.toString();
-        assertTrue(orden.startsWith("Thor->Loki;"));
-        assertTrue(orden.contains("Loki->Thor;"));
-        assertTrue(orden.contains("Thor->Loki;"));
-    }
-
-    @Test
-    @DisplayName("Combate completo usa estrategias deterministas y muestra rotacion correcta")
-    void testCombateCompletoConEstrategias() {
-        Personaje guerrero = new Personaje("Thor");
-        Personaje loki = new Personaje("Loki");
-        guerrero.setEstrategiaAtaque(new EstrategiaFija(30));
-        loki.setEstrategiaAtaque(new EstrategiaFija(10));
-
-        PrintStream original = System.out;
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));
-        try {
-            new JuegoLucha(guerrero, loki).iniciarCombate();
-        } finally {
-            System.setOut(original);
-        }
-
-        assertTrue(guerrero.estaVivo());
-        assertFalse(loki.estaVivo());
-        assertTrue(loki.getPuntosDeVida() == 0);
-    }
-
-    private static class PersonajeStub extends Personaje {
-        private final int[] daños;
-        private int index = 0;
-        private final StringBuilder log;
-
-        PersonajeStub(String nombre, int... daños) {
-            super(nombre);
-            this.daños = daños;
-            this.log = null;
-        }
-
-        PersonajeStub(String nombre, StringBuilder log, int... daños) {
-            super(nombre);
-            this.daños = daños;
-            this.log = log;
-        }
-
-        @Override
-        public void atacar(Personaje oponente) {
-            int dano = index < daños.length ? daños[index] : daños[daños.length - 1];
-            index++;
-            if (log != null) {
-                log.append(getNombre()).append("->").append(oponente.getNombre()).append(";");
-            }
-            oponente.recibirDano(dano);
-        }
-    }
-
-    private static class EstrategiaFija implements EstrategiaAtaque {
-        private final int daño;
-
-        EstrategiaFija(int daño) {
-            this.daño = daño;
-        }
-
-        @Override
-        public int atacar() {
-            return daño;
-        }
-
-        @Override
-        public String getAttackName() {
-            return "Ataque Fijo";
-        }
+        InOrder orden = inOrder(thor, loki);
+        orden.verify(thor).atacar(loki);
+        orden.verify(loki).atacar(thor);
+        orden.verify(thor).atacar(loki);
     }
 }

@@ -3,60 +3,73 @@ package com.juego.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import com.juego.patrones.strategy.EstrategiaAtaque;
 
 public class PersonajeTest {
-    private Personaje guerrero;
+    private Personaje personajeBase;
+    private final PrintStream originalOut = System.out;
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
     @BeforeEach
     public void setUp() {
-        guerrero = new Personaje("Thor");
+        personajeBase = new Personaje("Thor"); 
+        System.setOut(new PrintStream(outContent));
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.setOut(originalOut);
     }
 
     @Test
     @DisplayName("Debe crear personaje con 100 HP")
     void testCreacionPersonaje() {
-        assertEquals("Thor", guerrero.getNombre());
-        assertEquals(100, guerrero.getPuntosDeVida());
-        assertTrue(guerrero.estaVivo());
+        assertEquals("Thor", personajeBase.getNombre());
+        assertEquals(100, personajeBase.getPuntosDeVida());
+        assertTrue(personajeBase.estaVivo());
     }
 
     @Test
     @DisplayName("Recibir daño reduce puntos de vida")
     void testRecibirDanoReduceVida() {
-        guerrero.recibirDano(30);
-        assertEquals(70, guerrero.getPuntosDeVida());
-        assertTrue(guerrero.estaVivo());
+        personajeBase.recibirDano(30);
+        assertEquals(70, personajeBase.getPuntosDeVida());
+        assertTrue(personajeBase.estaVivo());
     }
 
     @Test
     @DisplayName("HP no debe ser negativo")
     void testNegativo() {
-        guerrero.recibirDano(150);
-        assertEquals(0, guerrero.getPuntosDeVida());
-        assertFalse(guerrero.estaVivo());
+        personajeBase.recibirDano(150);
+        assertEquals(0, personajeBase.getPuntosDeVida());
+        assertFalse(personajeBase.estaVivo());
     }
 
     @Test
     @DisplayName("Daño negativo no afecta los HP")
     void testDanoNegativo() {
-        guerrero.recibirDano(-20);
-        assertEquals(100, guerrero.getPuntosDeVida());
+        personajeBase.recibirDano(-20);
+        assertEquals(100, personajeBase.getPuntosDeVida());
     }
 
     @Test
     @DisplayName("Personaje muerto cuando los puntos de vida llegan a cero")
     void testPersonajeMuerto() {
-        guerrero.recibirDano(100);
-        assertEquals(0, guerrero.getPuntosDeVida());
-        assertFalse(guerrero.estaVivo());
+        personajeBase.recibirDano(100);
+        assertEquals(0, personajeBase.getPuntosDeVida());
+        assertFalse(personajeBase.estaVivo());
     }
 
     @Test
@@ -64,10 +77,11 @@ public class PersonajeTest {
     void testRangoAtaque() {
         Personaje oponente = new Personaje("Loki");
         int vidaInicial = oponente.getPuntosDeVida();
-        guerrero.atacar(oponente);
-        int vidaFinal = oponente.getPuntosDeVida();
-        int dano = vidaInicial - vidaFinal;
-        assertTrue(dano >= 10 && dano <= 30, "El danio debe estar entre 10 y 30, fue:" + dano);
+        
+        personajeBase.atacar(oponente);
+        int dano = vidaInicial - oponente.getPuntosDeVida();
+        
+        assertTrue(dano >= 10 && dano <= 30, "El daño debe estar entre 10 y 30, fue: " + dano);
     }
 
     @Test
@@ -75,11 +89,12 @@ public class PersonajeTest {
     void testCambioEstrategia() {
         EstrategiaAtaque estrategiaMock = mock(EstrategiaAtaque.class);
         when(estrategiaMock.atacar()).thenReturn(12);
+        when(estrategiaMock.getAttackName()).thenReturn("Ataque Mock");
 
-        guerrero.setEstrategiaAtaque(estrategiaMock);
+        personajeBase.setEstrategiaAtaque(estrategiaMock);
         Personaje oponente = new Personaje("Loki");
 
-        guerrero.atacar(oponente);
+        personajeBase.atacar(oponente);
 
         verify(estrategiaMock).atacar();
         assertEquals(88, oponente.getPuntosDeVida());

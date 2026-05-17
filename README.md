@@ -10,7 +10,8 @@ El sistema implementa una arquitectura desacoplada basada en patrones creacional
 ### 1. Patrón Strategy (Estructural)
 
 * **Por qué se eligió:** Evita la acumulación de estructuras condicionales complejas (`if-else` o `switch`) dentro de la clase `Personaje` para determinar el daño según el tipo de ataque. Permite cumplir con el principio de Abierto/Cerrado (OCP), facilitando la adición de nuevos tipos de daño sin modificar las clases existentes.
-* **Flujo de ejecución:** 1. La interfaz `EstrategiaAtaque` define el contrato mediante el método `atacar()`.
+* **Flujo de ejecución:** 
+  1. La interfaz `EstrategiaAtaque` define el contrato mediante el método `atacar()`.
   2. Clases concretas (`AtaqueFuerte`, `AtaqueMagico`, `AtaqueDebil`, `AtaqueNormal`) implementan dicha interfaz encapsulando sus propios rangos de daño aleatorio.
   3. La clase `Personaje` mantiene una referencia polimórfica a `EstrategiaAtaque`.
   4. Al invocar `Personaje.atacar(oponente)`, el flujo delega el cálculo del daño directamente al método `atacar()` de la estrategia asignada y aplica el resultado sobre la salud del oponente.
