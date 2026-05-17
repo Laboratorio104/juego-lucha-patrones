@@ -3,6 +3,8 @@
 
 # Juego de Lucha por Turnos
 
+<img width="4859" height="2760" alt="diagrama" src="https://github.com/user-attachments/assets/5c3c5e96-5d4e-48f9-b7e2-24dbc26ba707" />
+
 ## Arquitectura y Patrones de Diseño
 
 El sistema implementa una arquitectura desacoplada basada en patrones creacionales y estructurales para garantizar la extensibilidad y cumplir con los principios de diseño de software.
