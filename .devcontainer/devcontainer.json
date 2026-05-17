@@ -6,8 +6,12 @@
       "version": "17",
       "jdkType": "temurin",
       "installMaven": "true"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "latest"
     }
   },
+  "forwardPorts": [8080],
   "customizations": {
     "vscode": {
       "extensions": [

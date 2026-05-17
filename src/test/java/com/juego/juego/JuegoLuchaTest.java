@@ -5,6 +5,8 @@ import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +14,64 @@ import com.juego.model.Personaje;
 import com.juego.patrones.strategy.EstrategiaAtaque;
 
 public class JuegoLuchaTest {
+
+    @Test
+    @DisplayName("El método main ejecuta una simulación completa sin fallar")
+    void testMainEjecutaSinExcepciones() {
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
+        try {
+            assertDoesNotThrow(() -> {
+                JuegoLucha.main(new String[]{});
+            }, "La simulación del método main falló y lanzó una excepción");
+        } finally {
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    @DisplayName("El ciclo no se ejecuta si un personaje ya está muerto al iniciar")
+    void testCombateConPersonajeMuerto() {
+        Personaje atacante = new Personaje("Thor");
+        Personaje defensor = new Personaje("Loki");
+
+        defensor.recibirDano(150); 
+        
+        JuegoLucha juego = new JuegoLucha(atacante, defensor);
+        
+        PrintStream original = System.out;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
+        try {
+            juego.iniciarCombate();
+        } finally {
+            System.setOut(original);
+        }
+        
+        assertFalse(defensor.estaVivo());
+        assertEquals(100, atacante.getPuntosDeVida());
+    }
+
+    @Test
+    @DisplayName("El ciclo no se ejecuta si el atacante inicial ya está muerto")
+    void testCombateConAtacanteMuerto() {
+        Personaje atacante = new Personaje("Thor");
+        Personaje defensor = new Personaje("Loki");
+
+        atacante.recibirDano(150); 
+        
+        JuegoLucha juego = new JuegoLucha(atacante, defensor);
+        
+        PrintStream original = System.out;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
+        try {
+            juego.iniciarCombate();
+        } finally {
+            System.setOut(original);
+        }
+        
+        assertFalse(atacante.estaVivo());
+        assertEquals(100, defensor.getPuntosDeVida());
+    }
 
     @Test
     @DisplayName("El combate termina cuando el defensor muere")
