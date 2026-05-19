@@ -1,6 +1,12 @@
 [![Build Status](https://github.com/Laboratorio104/juego-lucha-patrones/actions/workflows/ci.yml/badge.svg)](https://github.com/Laboratorio104/juego-lucha-patrones/actions)
 [![JaCoCo Coverage](.github/badges/jacoco.svg?v=2)](https://jacoco.org)
 
+# Integrantes
+Johan Stiven Bedoya Criollo
+Luis Fernando Gonzalez Vergara
+Carlos Hernando Mendoza Rivera
+Jorda Alexis Vasquez Puertocarrero
+
 # Juego de Lucha por Turnos
 
 <img width="4859" height="2760" alt="diagrama" src="https://github.com/user-attachments/assets/5c3c5e96-5d4e-48f9-b7e2-24dbc26ba707" />
