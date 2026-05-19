@@ -2,10 +2,10 @@
 [![JaCoCo Coverage](.github/badges/jacoco.svg?v=2)](https://jacoco.org)
 
 # Integrantes
-Johan Stiven Bedoya Criollo
-Luis Fernando Gonzalez Vergara
-Carlos Hernando Mendoza Rivera
-Jorda Alexis Vasquez Puertocarrero
+* Johan Stiven Bedoya Criollo
+* Luis Fernando Gonzalez Vergara
+* Carlos Hernando Mendoza Rivera
+* Jorda Alexis Vasquez Puertocarrero
 
 # Juego de Lucha por Turnos
 
