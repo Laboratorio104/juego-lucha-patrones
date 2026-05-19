@@ -50,6 +50,3 @@ mvn test
 mvn jacoco:report
 ```
 *El reporte interactivo en formato HTML se genera en la ruta: `target/site/jacoco/index.html`.*
-
-## Sustentación del Proyecto
-[Insertar enlace del video aquí]
